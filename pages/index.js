@@ -7,7 +7,6 @@ import { getPostsData } from "../lib/post";
 // SSGの場合
 export async function getStaticProps() {
   const allPostsData = getPostsData(); // id, title, data, thumbnail
-  console.log(allPostsData);
 
   return {
     props: {
@@ -15,6 +14,15 @@ export async function getStaticProps() {
     },
   };
 }
+
+// SSRの場合
+// export async function getServerSideProps(context) {
+//   return {
+//     props: {
+//       allPostsDatas,
+//     },
+//   };
+// }
 
 export default function Home({ allPostsData }) {
   return (
@@ -26,21 +34,18 @@ export default function Home({ allPostsData }) {
       <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
         <h2>📝エンジニアのブログ</h2>
         <div className={styles.grid}>
-          <article>
-            <Link href="/">
-              <img
-                src="/images/thumbnail01.jpg"
-                className={styles.thumbnailImage}
-              />
-            </Link>
-            <Link href="/">
-              <a className={utilStyles.boldText}>
-                SSGとSSRの使い分けの場面はいつなのか？
-              </a>
-            </Link>
-            <br />
-            <small className={utilStyles.lightText}>February 23, 2020</small>
-          </article>
+          {allPostsData.map(({ id, title, date, thumbnail }) => (
+            <article key={id}>
+              <Link href={`/posts/${id}`}>
+                <img src={`${thumbnail}`} className={styles.thumbnailImage} />
+              </Link>
+              <Link href={`/posts/${id}`}>
+                <a className={utilStyles.boldText}>{title}</a>
+              </Link>
+              <br />
+              <small className={utilStyles.lightText}>{date}</small>
+            </article>
+          ))}
         </div>
       </section>
     </Layout>
